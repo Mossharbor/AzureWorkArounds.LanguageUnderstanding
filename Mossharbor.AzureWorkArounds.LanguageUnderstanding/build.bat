@@ -1,1 +1,1 @@
-msbuild /t:pack /p:NuspecFile=Package.nuspec MMossharbor.AzureWorkArounds.LanguageUnderstanding.csproj
+msbuild /t:pack /p:NuspecFile=Package.nuspec Mossharbor.AzureWorkArounds.LanguageUnderstanding.csproj
