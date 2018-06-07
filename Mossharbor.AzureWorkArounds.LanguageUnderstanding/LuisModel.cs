@@ -10,17 +10,19 @@ namespace Mossharbor.AzureWorkArounds.LanguageUnderstanding
 {
     public class LuisModel
     {
+        //https://westus.dev.cognitive.microsoft.com/docs/services/5890b47c39e2bb17b84a55ff/operations/5890b47c39e2bb052c5b9c2f
         string ocpAcimSubscriptionKey;
         string luisAppID;
         string path;
-        static string appVersion = "0.1";
+        string appVersion;
         static string host = "https://westus.api.cognitive.microsoft.com";
         internal string UriRoot { get; set; }
         
-        public LuisModel(string luisAppID, string ocpAcimSubscriptionKey)
+        public LuisModel(string luisAppID, string ocpAcimSubscriptionKey,string appVersion = "0.1")
         {
             this.ocpAcimSubscriptionKey = ocpAcimSubscriptionKey;
             this.luisAppID = luisAppID;
+            this.appVersion = appVersion;
             this.path = "/luis/api/v2.0/apps/" + luisAppID + "/versions/" + appVersion + "/";
             UriRoot = host + path;
         }
@@ -79,11 +81,12 @@ namespace Mossharbor.AzureWorkArounds.LanguageUnderstanding
 
         static IDictionary<string, Guid> ParseOutIntents(HttpResponseMessage response)
         {
+            response.EnsureSuccessStatusCode();
             var names = new Dictionary<string, Guid>();
-            dynamic dynObj = JsonConvert.DeserializeObject(response.Content.ReadAsStringAsync().Result);
-            foreach (var t in dynObj)
+            IntentList dynObj = JsonConvert.DeserializeObject<IntentList>("{ \"intents\":"+response.Content.ReadAsStringAsync().Result+"}");
+            foreach (var t in dynObj.intents)
             {
-                names.Add(t.name.ToString(), Guid.Parse(t.id.ToString()));
+                names.Add(t.name, Guid.Parse(t.id.ToString()));
             }
             return names;
         }
@@ -117,28 +120,28 @@ namespace Mossharbor.AzureWorkArounds.LanguageUnderstanding
 
         static void ParseOutEntities(HttpResponseMessage response, IDictionary<string, Guid> names)
         {
-            dynamic dynObj = JsonConvert.DeserializeObject(response.Content.ReadAsStringAsync().Result);
-            foreach (var t in dynObj)
+            response.EnsureSuccessStatusCode();
+            EntityList dynObj = JsonConvert.DeserializeObject<EntityList>("{ \"entities\":"+response.Content.ReadAsStringAsync().Result + "}");
+            foreach (var t in dynObj.entities)
             {
-                names.Add(t.name.ToString(), Guid.Parse(t.id.ToString()));
+                names.Add(t.name, Guid.Parse(t.id.ToString()));
             }
             return;
         }
 
-        public string GetTrainingStatus()
+        private string GetTrainingStatus()
         {
-            var response = SendGet(host + path + "train", true).Result;
+            var response = SendGet(UriRoot + "train", true).Result;
             var result = response.Content.ReadAsStringAsync().Result;
 
-            throw new NotImplementedException(); // TODO need to parse response
+            TrainingStatus dynObj = JsonConvert.DeserializeObject<TrainingStatus>("{ \"models\":" + response.Content.ReadAsStringAsync().Result + "}");
+            return dynObj.models.First().details.status;
         }
 
         public bool ModelNeedsTraining()
         {
-            string uri = host + path;
-            HttpResponseMessage response = SendGet(uri, true).Result;
-
-            dynamic dynObj = JsonConvert.DeserializeObject(response.Content.ReadAsStringAsync().Result);
+            HttpResponseMessage response = SendGet(UriRoot, true).Result;
+            ModelData dynObj = JsonConvert.DeserializeObject<ModelData>(response.Content.ReadAsStringAsync().Result);
             if (dynObj.trainingStatus == "NeedsTraining")
                 return true;
 
@@ -147,7 +150,7 @@ namespace Mossharbor.AzureWorkArounds.LanguageUnderstanding
 
         public string Train()
         {
-            string uri = host + path + "train";
+            string uri = UriRoot + "train";
             var response = SendPost(uri, String.Empty, true).Result;
             var result = response.Content.ReadAsStringAsync().Result;
             System.Diagnostics.Debug.WriteLine("Sent training request.");

@@ -15,6 +15,28 @@ namespace UnitTests
         string ocpAcimSubscriptionKey = "";
 
         [TestMethod]
+        public void TestGettingIntents()
+        {
+            LuisModel model = new LuisModel(luisAppID, ocpAcimSubscriptionKey);
+            var intentNames = model.GetIntents().Keys;
+        }
+
+        [TestMethod]
+        public void TestGettingEntities()
+        {
+            LuisModel model = new LuisModel(luisAppID, ocpAcimSubscriptionKey);
+            var intentNames = model.GetEntities().Keys;
+        }
+
+        [TestMethod]
+        public void TestGettingTrainingStatus()
+        {
+            LuisModel model = new LuisModel(luisAppID, ocpAcimSubscriptionKey);
+            model.ModelNeedsTraining();
+            model.Train();
+        }
+
+        [TestMethod]
         public void TestAddingIntent()
         {
             string intentName = "TestAddingIntent";
