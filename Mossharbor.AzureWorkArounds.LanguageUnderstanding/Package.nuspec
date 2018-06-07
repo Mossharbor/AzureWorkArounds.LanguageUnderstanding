@@ -6,7 +6,7 @@
     <authors>M@ J.</authors>
     <owners>M@ J.</owners>
     <licenseUrl>https://raw.githubusercontent.com/Mossharbor/AzureWorkArounds.LanguageUnderstanding/master/LICENSE</licenseUrl>
-    <projectUrl>https://raw.githubusercontent.com/Mossharbor/AzureWorkArounds.LanguageUnderstanding</projectUrl>
+    <projectUrl>https://github.com/Mossharbor/AzureWorkArounds.LanguageUnderstanding</projectUrl>
     <!-- <iconUrl>http://ICON_URL_HERE_OR_DELETE_THIS_LINE</iconUrl> -->
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>.Net wrapper around Language Understanding (LUIS) Rest Apis</description>
