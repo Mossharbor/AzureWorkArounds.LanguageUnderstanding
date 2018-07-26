@@ -35,8 +35,7 @@ namespace Mossharbor.AzureWorkArounds.LanguageUnderstanding
             this.luis = model;
             this.fn = (ignored) => new LuisModelBuilder(model);
         }
-
-
+        
         internal virtual LuisModelBuilder AddIntentExample(IntentExampleJson intent)
         {
             this.fn = Compose(this.fn, (modelBuilder) =>
@@ -51,24 +50,6 @@ namespace Mossharbor.AzureWorkArounds.LanguageUnderstanding
             return this;
         }
 
-        internal virtual IntentExampleBuilder AddIntentExample(string exampleString)
-        {
-            IntentExampleBuilder example = new IntentExampleBuilder(this, exampleString);
-            return example;
-        }
-
-        internal virtual IntentExampleBuilder AddIntentExample(string exampleString, string intentName)
-        {
-            IntentExampleBuilder example = new IntentExampleBuilder(this, exampleString, intentName);
-            return example;
-        }
-
-        internal virtual LuisModelBuilder AddIntentExample(string exampleString, string intentName, List<KeyValuePair<string, string>> entityToEntityInExample)
-        {
-            IntentExampleBuilder example = new IntentExampleBuilder(this, exampleString, intentName, entityToEntityInExample);
-            return example.CompleteExample();
-        }
-
         public void Update()
         {
             this.fn(null);
@@ -81,6 +62,43 @@ namespace Mossharbor.AzureWorkArounds.LanguageUnderstanding
                 string uri = luis.UriRoot + "intents";
                 string jsonBody = "{ \"name\": \"" + intentName + "\"}";
                 luis.SendPost(uri, jsonBody, true).Wait();
+
+                return modelBuilder;
+            });
+            return this;
+        }
+
+        public virtual LuisModelBuilder AddIntent(string intentName, string intentExample)
+        {
+            this.fn = Compose(this.fn, (modelBuilder) =>
+            {
+                string uri = luis.UriRoot + "intents";
+                string jsonBody = "{ \"name\": \"" + intentName + "\"}";
+                luis.SendPost(uri, jsonBody, true).Wait();
+
+                var examplejson = new IntentExampleJson(intentExample, intentName);
+                modelBuilder.AddIntentExample(examplejson);
+
+                return modelBuilder;
+            });
+            return this;
+        }
+
+        public virtual LuisModelBuilder AddIntent(string intentName, string intentExample, Entitylabel entityInExample)
+        {
+            return AddIntent(intentName, intentExample, new List<Entitylabel>() { entityInExample });
+        }
+
+        public virtual LuisModelBuilder AddIntent(string intentName, string intentExample, IList<Entitylabel> entitiesInExample)
+        {
+            this.fn = Compose(this.fn, (modelBuilder) =>
+            {
+                string uri = luis.UriRoot + "intents";
+                string jsonBody = "{ \"name\": \"" + intentName + "\"}";
+                luis.SendPost(uri, jsonBody, true).Wait();
+
+                var examplejson = new IntentExampleJson(intentExample, intentName, entitiesInExample);
+                modelBuilder.AddIntentExample(examplejson);
 
                 return modelBuilder;
             });

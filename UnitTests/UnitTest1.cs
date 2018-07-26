@@ -150,5 +150,35 @@ namespace UnitTests
             var result = model.Query("Can I get an Uber");
             Assert.IsTrue(null != result);
         }
+
+        [TestMethod]
+        public void TestAddingIntentExample()
+        {
+            string intentName = "TestAddingIntentExample";
+            string intentExample = "Rotate object 30 degrees to the left";
+            string entityName = "amount";
+            string entityDirection = "direction";
+            string entityNameExample = "30 degrees";
+            string entityDirectionExample = "left";
+            LuisModel model = new LuisModel(luisAppID, ocpAcimSubscriptionKey);
+            try
+            {
+                model.Modify()
+                    .AddIntent(intentName, intentExample, new List<Entitylabel>()
+                    {
+                        Entitylabel.Create(intentExample, entityName, entityNameExample),
+                        Entitylabel.Create(intentExample, entityDirection, entityDirectionExample),
+                    })
+                    .Update();
+                
+                var intentNames = model.GetIntents().Keys;
+                Assert.IsTrue(intentNames.Contains(intentName));
+            }
+            finally
+            {
+                model.DeleteIntent(intentName);
+            }
+
+        }
     }
 }
