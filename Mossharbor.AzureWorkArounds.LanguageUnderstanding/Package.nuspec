@@ -2,7 +2,7 @@
 <package >
   <metadata>
     <id>Mossharbor.AzureWorkArounds.LanguageUnderstanding</id>
-    <version>1.0.1</version>
+    <version>1.0.3</version>
     <authors>M@ J.</authors>
     <owners>M@ J.</owners>
     <licenseUrl>https://raw.githubusercontent.com/Mossharbor/AzureWorkArounds.LanguageUnderstanding/master/LICENSE</licenseUrl>
@@ -10,7 +10,7 @@
     <!-- <iconUrl>http://ICON_URL_HERE_OR_DELETE_THIS_LINE</iconUrl> -->
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>.Net wrapper around Language Understanding (LUIS) Rest Apis</description>
-    <releaseNotes>Initial Commit and Check-in</releaseNotes>
+    <releaseNotes>Added ability to add intent examples</releaseNotes>
     <copyright>Copyright 2018 Mossharbor</copyright>
     <tags>Luis Language Understanding dotnetcore Azure</tags>
   </metadata>

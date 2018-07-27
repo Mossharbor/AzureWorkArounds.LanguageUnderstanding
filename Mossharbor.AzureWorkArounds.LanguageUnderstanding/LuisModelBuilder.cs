@@ -40,7 +40,7 @@ namespace Mossharbor.AzureWorkArounds.LanguageUnderstanding
         {
             this.fn = Compose(this.fn, (modelBuilder) =>
             {
-                string uri = luis.UriRoot+ "examples";
+                string uri = luis.UriRoot+ "example";
                 string requestBody = JsonConvert.SerializeObject(intent);
 
                 var response = luis.SendPost(uri, requestBody, true).Result;
@@ -104,6 +104,36 @@ namespace Mossharbor.AzureWorkArounds.LanguageUnderstanding
             });
             return this;
         }
+
+        public virtual LuisModelBuilder AddIntentExample(string intentName, string intentExample)
+        {
+            this.fn = Compose(this.fn, (modelBuilder) =>
+            {
+                var examplejson = new IntentExampleJson(intentExample, intentName);
+                modelBuilder.AddIntentExample(examplejson);
+
+                return modelBuilder;
+            });
+            return this;
+        }
+
+        public virtual LuisModelBuilder AddIntentExample(string intentName, string intentExample, Entitylabel entityInExample)
+        {
+            return AddIntentExample(intentName, intentExample, new List<Entitylabel>() { entityInExample });
+        }
+
+        public virtual LuisModelBuilder AddIntentExample(string intentName, string intentExample, IList<Entitylabel> entitiesInExample)
+        {
+            this.fn = Compose(this.fn, (modelBuilder) =>
+            {
+                var examplejson = new IntentExampleJson(intentExample, intentName, entitiesInExample);
+                modelBuilder.AddIntentExample(examplejson);
+
+                return modelBuilder;
+            });
+            return this;
+        }
+
 
         public virtual LuisModelBuilder RenameIntent(string existingName, string newName)
         {
