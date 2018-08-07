@@ -164,7 +164,7 @@ namespace UnitTests
             try
             {
                 model.Modify()
-                    .AddIntent(intentName, intentExample, new List<Entitylabel>()
+                    .AddIntent(intentName, new List<Entitylabel>()
                     {
                         Entitylabel.Create(intentExample, entityName, entityNameExample),
                         Entitylabel.Create(intentExample, entityDirection, entityDirectionExample),
