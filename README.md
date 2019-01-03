@@ -10,7 +10,11 @@ using Mossharbor.AzureWorkArounds.LanguageUnderstanding;
 // Query
 LuisModel model = new LuisModel(luisAppID, ocpAcimSubscriptionKey); // TODO enter your credentials in here!!
 var result = model.Query("Can I get an Uber");
-
+string topScoringIntent = result.topScoringIntent.intent;
+float topIntentScore = result.topScoringIntent.score;
+string firstsEntity = result.entities[0].entity;
+string sentiment = result.sentimentAnalysis.label;
+			
 var intentNames = model.GetIntents().Keys;
 var entityNames = model.GetEntities().Keys;
 
@@ -26,8 +30,8 @@ model.Modify()
     .AddSimpleEntity("childEntity")
     .AddCompositeEntity("CompositeEntity", new string[]{ "childEntity" })
     .AddClosedListEntity("ClosedListEntity", washington)
-	.AddHierarchicalEntity(entityname, childEntities)
-	.Update();
+    .AddHierarchicalEntity(entityname, childEntities)
+    .Update();
 
 //  Add intents with examples
 string intentName = "TestAddingIntentExample";
