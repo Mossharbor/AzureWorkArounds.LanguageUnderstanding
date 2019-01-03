@@ -7,19 +7,40 @@ Install the nuget package:  [Install-Package Mossharbor.AzureWorkArounds.Languag
 ```cs
 using Mossharbor.AzureWorkArounds.LanguageUnderstanding;
 
-// TODO enter your credentials in here!!
-LuisModel model = new LuisModel(luisAppID, ocpAcimSubscriptionKey);
+// Query
+LuisModel model = new LuisModel(luisAppID, ocpAcimSubscriptionKey); // TODO enter your credentials in here!!
 var result = model.Query("Can I get an Uber");
 
-// add new answer and questions to your qna knowledgebase
+var intentNames = model.GetIntents().Keys;
+var entityNames = model.GetEntities().Keys;
+
+// add/Modify your model
 model.Modify()
 	.AddIntent(intentName)
 	.Update();
 
-var intentNames = model.GetIntents().Keys;
-
+var washington = new Dictionary<string, IEnumerable<string>> { { "Washington", new List<string>() { "WA", "Washington" } } };
+var childEntities = new List<string>() { "childEntity", "ClosedListEntity" };
+			
 model.Modify()
-	.AddSimpleEntity(entityname)
+    .AddSimpleEntity("childEntity")
+    .AddCompositeEntity("CompositeEntity", new string[]{ "childEntity" })
+    .AddClosedListEntity("ClosedListEntity", washington)
+	.AddHierarchicalEntity(entityname, childEntities)
 	.Update();
 
-var entityNames = model.GetEntities().Keys;
+//  Add intents with examples
+string intentName = "TestAddingIntentExample";
+string intentExample = "Rotate object 30 degrees to the left";
+string entityName = "amount";
+string entityDirection = "direction";
+string entityNameExample = "30 degrees";
+string entityDirectionExample = "left";
+			
+model.Modify()
+     .AddIntent(intentName, new List<Entitylabel>()
+              {
+                Entitylabel.Create(intentExample, entityName, entityNameExample),
+                Entitylabel.Create(intentExample, entityDirection, entityDirectionExample),
+              })
+	.Update()
