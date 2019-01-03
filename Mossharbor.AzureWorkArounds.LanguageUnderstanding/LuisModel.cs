@@ -15,16 +15,24 @@ namespace Mossharbor.AzureWorkArounds.LanguageUnderstanding
         string luisAppID;
         string path;
         string appVersion;
-        static string host = "https://westus.api.cognitive.microsoft.com";
+        string apiURL = "https://%REGION%.api.cognitive.microsoft.com";
+        string azureRegion = "westus";
+        private string urlRoot = null;
         internal string UriRoot { get; set; }
         
-        public LuisModel(string luisAppID, string ocpAcimSubscriptionKey,string appVersion = "0.1")
+        public LuisModel(string luisAppID, string ocpAcimSubscriptionKey,string appVersion = "0.1", string azureRegion = "westus")
         {
+            this.azureRegion = azureRegion;
             this.ocpAcimSubscriptionKey = ocpAcimSubscriptionKey;
             this.luisAppID = luisAppID;
             this.appVersion = appVersion;
             this.path = "/luis/api/v2.0/apps/" + luisAppID + "/versions/" + appVersion + "/";
-            UriRoot = host + path;
+            urlRoot = APIURL + path;
+        }
+
+        public string APIURL
+        {
+            get { return apiURL.Replace("%REGION", azureRegion); }
         }
 
         public QueryResponse Query(string queryPhrase)
