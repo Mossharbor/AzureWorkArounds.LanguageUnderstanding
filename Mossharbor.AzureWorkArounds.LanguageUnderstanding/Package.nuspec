@@ -2,7 +2,7 @@
 <package >
   <metadata>
     <id>Mossharbor.AzureWorkArounds.LanguageUnderstanding</id>
-    <version>1.0.5</version>
+    <version>1.0.6</version>
     <authors>M@ J.</authors>
     <owners>M@ J.</owners>
     <licenseUrl>https://raw.githubusercontent.com/Mossharbor/AzureWorkArounds.LanguageUnderstanding/master/LICENSE</licenseUrl>
